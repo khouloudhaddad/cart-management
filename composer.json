@@ -10,6 +10,16 @@
             "role": "Software Engineer"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "khoul\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "khoul\\Tests\\": "tests/"
+        }
+    },
     "require": {
         "php" : ">8.1"
     },
