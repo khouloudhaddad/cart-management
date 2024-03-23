@@ -1,0 +1,16 @@
+{
+    "name": "khoul/cart-management",
+    "description": "Cart management with native PHP - TDD",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "khouloud Haddad Amamou",
+            "email": "khouloud.haddad@gmail.com",
+            "role": "Software Engineer"
+        }
+    ],
+    "require": {
+        "php" : ">8.1"
+    }
+}
