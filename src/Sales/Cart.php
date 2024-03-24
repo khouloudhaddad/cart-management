@@ -2,8 +2,6 @@
 declare(strict_types=1);
 namespace khoul\Sales;
 
-use PhpParser\Node\Expr\Array_;
-
 final class Cart
 {
     private string $id;
@@ -25,19 +23,14 @@ final class Cart
         return $this->items;
     }
 
-    public function addItem(string $sku, string $name, $price, $quantity): self
+    public function addItem(CartItem $item): self
     {
-        $this->items[$sku] = [
-            'sku' => $sku,
-            'name' => $name,
-            'price' => $price,
-            'ordered_quantity' => $quantity
-        ];
+        $this->items[$item->getProduct()->getSku()] = $item;
 
         return $this;
     }
 
-    public function getItem(string $sku): ?array
+    public function getItem(string $sku): ?CartItem
     {
         return $this->items[$sku];
     }
