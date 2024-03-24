@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace khoul\Sales;
 
+use khoul\Sales\Exception\NotAllowedQuantityException;
+
 final class Cart
 {
     private string $id;
@@ -25,18 +27,16 @@ final class Cart
 
     public function addItem(CartItem $item): self
     {
-        if($item->getOrderedQuantity() <= 0){
-            throw new \Exception(sprintf(
-                'Cart item with negative quantity is not allowed. [%d] given.',
-                $item->getOrderedQuantity()
-            ));
+        $orderedQuantity = $item->getOrderedQuantity();
+        if($orderedQuantity <= 0){
+            throw new NotAllowedQuantityException($orderedQuantity);
         }
 
         $productSku = $item->getProduct()->getSku();
         $existingItem = $this->getItem($productSku);
 
         if($existingItem !== null){
-            $existingItem->incrementOrderedQuantity($item->getOrderedQuantity());
+            $existingItem->incrementOrderedQuantity($orderedQuantity);
         } else {
             $this->items[$productSku] = $item;
         }

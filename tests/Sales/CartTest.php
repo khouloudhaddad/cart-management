@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace khoul\Tests\Sales;
 
 use khoul\Sales\CartItem;
+use khoul\Sales\Exception\NotAllowedQuantityException;
 use khoul\Sales\Factory\CartItemFactory;
 use khoul\Sales\Product;
 use PHPUnit\Framework\TestCase;
@@ -115,7 +116,7 @@ final class CartTest extends TestCase
     }
     public function test_add_one_product_into_cart_with_zero_quantity(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(NotAllowedQuantityException::class);
         $this->expectExceptionMessage('Cart item with negative quantity is not allowed. [0] given.');
 
         $this->cart->addItem(CartItemFactory::create([
@@ -130,7 +131,7 @@ final class CartTest extends TestCase
 
     public function test_add_one_product_into_cart_with_negative_quantity(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(NotAllowedQuantityException::class);
         $this->expectExceptionMessage('Cart item with negative quantity is not allowed. [-1] given.');
 
         $this->cart->addItem(CartItemFactory::create([
