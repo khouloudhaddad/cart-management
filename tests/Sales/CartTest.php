@@ -35,9 +35,8 @@ final class CartTest extends TestCase
         $this->assertCount(0, $this->cart->getItems());
     }
 
-    public function test_add_one_product_into_cart(): void{
-        $this->cart->addItem(new CartItem(new Product('ABCDEF', 'T-shirt', 10.99), 1));
-
+    public function test_add_one_product_into_cart(): void
+    {
         $this->cart->addItem(CartItemFactory::create([
             'product'=> [
                 "sku" => "ABCDEF",
@@ -51,5 +50,96 @@ final class CartTest extends TestCase
         $item = $this->cart->getItem('ABCDEF');
         $this->assertEquals('ABCDEF', $item->getProduct()->getSku());
         $this->assertEquals(1, $item->getOrderedQuantity());
+    }
+
+    public function test_add_two_products_into_cart(): void
+{
+    $items = [
+        [
+            'product'=> [
+                "sku" => "ABCDEF",
+                'name' => 'T-shirt',
+                'price' => 10.99
+            ],
+            'ordered_quantity' => 1
+        ],
+        [
+            'product'=> [
+                "sku" => "GHIJKL",
+                'name' => 'Pent',
+                'price' => 19.99
+            ],
+            'ordered_quantity' => 5
+        ]
+    ];
+
+    foreach($items as $item){
+        $this->cart->addItem(CartItemFactory::create($item));
+    }
+    $this->assertCount(2, $this->cart->getItems());
+
+    $item = $this->cart->getItem('GHIJKL');
+    $this->assertEquals('GHIJKL', $item->getProduct()->getSku());
+    $this->assertEquals(5, $item->getOrderedQuantity());
+}
+
+    public function test_add_one_products_many_times_into_cart(): void
+    {
+        $items = [
+            [
+                'product'=> [
+                    "sku" => "ABCDEF",
+                    'name' => 'T-shirt',
+                    'price' => 10.99
+                ],
+                'ordered_quantity' => 1
+            ],
+            [
+                'product'=> [
+                    "sku" => "ABCDEF",
+                    'name' => 'T-shirt',
+                    'price' => 10.99
+                ],
+                'ordered_quantity' => 5
+            ]
+        ];
+
+        foreach($items as $item){
+            $this->cart->addItem(CartItemFactory::create($item));
+        }
+        $this->assertCount(1, $this->cart->getItems());
+
+        $item = $this->cart->getItem('ABCDEF');
+        $this->assertEquals('ABCDEF', $item->getProduct()->getSku());
+        $this->assertEquals(6, $item->getOrderedQuantity());
+    }
+    public function test_add_one_product_into_cart_with_zero_quantity(): void
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Cart item with negative quantity is not allowed. [0] given.');
+
+        $this->cart->addItem(CartItemFactory::create([
+            'product'=> [
+                "sku" => "ABCDEF",
+                'name' => 'T-shirt',
+                'price' => 10.99
+            ],
+            'ordered_quantity' => 0
+        ]));
+    }
+
+    public function test_add_one_product_into_cart_with_negative_quantity(): void
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Cart item with negative quantity is not allowed. [-1] given.');
+
+        $this->cart->addItem(CartItemFactory::create([
+            'product'=> [
+                "sku" => "ABCDEF",
+                'name' => 'T-shirt',
+                'price' => 10.99
+            ],
+            'ordered_quantity' => -1
+        ]));
     }
 }

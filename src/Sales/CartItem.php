@@ -20,5 +20,10 @@ class CartItem
         return $this->orderedQuantity;
     }
 
+    public function incrementOrderedQuantity(int $quantityToAdd): self{
+        $this->orderedQuantity += $quantityToAdd;
+
+        return $this;
+    }
 
 }
