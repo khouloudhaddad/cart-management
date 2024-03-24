@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace khoul\Tests\Sales;
 
 use khoul\Sales\CartItem;
+use khoul\Sales\Factory\CartItemFactory;
 use khoul\Sales\Product;
 use PHPUnit\Framework\TestCase;
 use khoul\Sales\Cart;
@@ -36,6 +37,15 @@ final class CartTest extends TestCase
 
     public function test_add_one_product_into_cart(): void{
         $this->cart->addItem(new CartItem(new Product('ABCDEF', 'T-shirt', 10.99), 1));
+
+        $this->cart->addItem(CartItemFactory::create([
+            'product'=> [
+                "sku" => "ABCDEF",
+                'name' => 'T-shirt',
+                'price' => 10.99
+            ],
+            'ordered_quantity' => 1
+        ]));
         $this->assertCount(1, $this->cart->getItems());
 
         $item = $this->cart->getItem('ABCDEF');
