@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace khoul\Sales;
 
 use khoul\Sales\Exception\NotAllowedQuantityException;
+use khoul\Sales\Exception\ProductNotFoundException;
 
 final class Cart
 {
@@ -47,5 +48,24 @@ final class Cart
     public function getItem(string $sku): ?CartItem
     {
         return $this->items[$sku];
+    }
+
+    public function removeItem(string $productSku, ?int $quantityToRemove = null ): self
+    {
+        $item = $this->getItem($productSku);
+        if($item === null){
+            throw new ProductNotFoundException($productSku);
+        }
+
+        if($quantityToRemove === null){
+            unset($this->items[$productSku]);
+        }else{
+            $item->decrementOrderedQuantity($quantityToRemove);
+            if($item->getOrderedQuantity() === 0){
+                unset($this->items[$productSku]);
+            }
+        }
+
+        return $this;
     }
 }

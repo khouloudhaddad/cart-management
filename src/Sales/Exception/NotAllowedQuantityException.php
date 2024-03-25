@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace khoul\Sales\Exception;
 
 final class NotAllowedQuantityException extends \RuntimeException

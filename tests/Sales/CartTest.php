@@ -6,6 +6,7 @@ namespace khoul\Tests\Sales;
 
 use khoul\Sales\CartItem;
 use khoul\Sales\Exception\NotAllowedQuantityException;
+use khoul\Sales\Exception\ProductNotFoundException;
 use khoul\Sales\Factory\CartItemFactory;
 use khoul\Sales\Product;
 use PHPUnit\Framework\TestCase;
@@ -142,5 +143,60 @@ final class CartTest extends TestCase
             ],
             'ordered_quantity' => -1
         ]));
+    }
+
+    public function test_add_one_product_into_cart_remove_it(): void
+    {
+        $this->cart->addItem(CartItemFactory::create([
+            'product'=> [
+                "sku" => "ABCDEF",
+                'name' => 'T-shirt',
+                'price' => 10.99
+            ],
+            'ordered_quantity' => 1
+        ]));
+        $this->assertCount(1, $this->cart->getItems());
+
+        //delete item
+        $this->cart->removeItem('ABCDEF');
+
+        $this->assertNull($this->cart->getItem('ABCDEF'));
+        $this->assertCount(0, $this->cart->getItems());
+    }
+
+    public function test_add_one_product_into_cart_remove_not_existing(): void
+    {
+        $this->expectException(ProductNotFoundException::class);
+        $this->expectExceptionMessage('Product with sku [ABCDES] does not exist.');
+        $this->cart->addItem(CartItemFactory::create([
+            'product'=> [
+                "sku" => "ABCDEF",
+                'name' => 'T-shirt',
+                'price' => 10.99
+            ],
+            'ordered_quantity' => 1
+        ]));
+        $this->assertCount(1, $this->cart->getItems());
+
+        $this->cart->removeItem('ABCDES');
+    }
+
+    public function test_add_one_product_many_times_into_cart_decrease_quantity(): void
+    {
+        $this->cart->addItem(CartItemFactory::create([
+            'product'=> [
+                "sku" => "ABCDEF",
+                'name' => 'T-shirt',
+                'price' => 10.99
+            ],
+            'ordered_quantity' => 10
+        ]));
+
+        $this->cart->removeItem('ABCDEF',3);
+        $this->assertCount(1, $this->cart->getItems());
+
+        $item = $this->cart->getItem('ABCDEF');
+        $this->assertEquals('ABCDEF', $item->getProduct()->getSku());
+        $this->assertEquals(7, $item->getOrderedQuantity());
     }
 }

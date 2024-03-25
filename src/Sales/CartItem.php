@@ -26,4 +26,10 @@ class CartItem
         return $this;
     }
 
+    public function decrementOrderedQuantity(int $quantityToRemove): self{
+        $this->orderedQuantity -= $quantityToRemove;
+
+        return $this;
+    }
+
 }
